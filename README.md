@@ -6,17 +6,17 @@ Runs on **Desktop (JVM)** and **Android**.
 
 ## Screenshots
 
-### Splash Screen
-![Splash](screenshots/splash.png)
+### Desktop
 
-### Main Menu
-![Menu](screenshots/menu.png)
+| Splash | Menu | Game | History |
+|--------|------|------|---------|
+| ![Splash](screenshots/splash.png) | ![Menu](screenshots/menu.png) | ![Game](screenshots/game.png) | ![History](screenshots/history.png) |
 
-### Game Board
-![Game](screenshots/game.png)
+### Android
 
-### Game History
-![History](screenshots/history.png)
+| Splash | Menu | Settings | Game | History |
+|--------|------|----------|------|---------|
+| ![Splash](screenshots/splashAndr.png) | ![Menu](screenshots/menuAndr.png) | ![Settings](screenshots/settingsAndr.png) | ![Game](screenshots/gameAndr.png) | ![History](screenshots/historyAndr.png) |
 
 ## How to Run
 
@@ -77,7 +77,7 @@ To add a new language:
 │       ├── StringsRu.kt          # Russian translations
 │       ├── StringsEn.kt          # English translations
 │       └── StringsDe.kt          # German translations
-└── screenshots/                  # Screenshots
+└── screenshots/                  # Screenshots (Desktop + Android)
 ```
 
 ---
@@ -90,17 +90,17 @@ To add a new language:
 
 ## Скриншоты
 
-### Splash Screen
-![Splash](screenshots/splash.png)
+### Desktop
 
-### Главное меню
-![Menu](screenshots/menu.png)
+| Splash | Меню | Игра | История |
+|--------|------|------|---------|
+| ![Splash](screenshots/splash.png) | ![Menu](screenshots/menu.png) | ![Game](screenshots/game.png) | ![History](screenshots/history.png) |
 
-### Игровое поле
-![Game](screenshots/game.png)
+### Android
 
-### История игр
-![History](screenshots/history.png)
+| Splash | Меню | Настройки | Игра | История |
+|--------|------|-----------|------|---------|
+| ![Splash](screenshots/splashAndr.png) | ![Menu](screenshots/menuAndr.png) | ![Settings](screenshots/settingsAndr.png) | ![Game](screenshots/gameAndr.png) | ![History](screenshots/historyAndr.png) |
 
 ## Запуск
 
@@ -161,5 +161,5 @@ JAVA_HOME=/path/to/jdk21 ./gradlew runAndroidEmulatorDebug
 │       ├── StringsRu.kt          # Русские переводы
 │       ├── StringsEn.kt          # Английские переводы
 │       └── StringsDe.kt          # Немецкие переводы
-└── screenshots/                  # Скриншоты
+└── screenshots/                  # Скриншоты (Desktop + Android)
 ```
