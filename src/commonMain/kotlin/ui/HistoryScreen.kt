@@ -3,8 +3,7 @@ package ui
 import korlibs.image.color.RGBA
 import korlibs.korge.view.*
 import korlibs.korge.input.*
-import model.history
-import model.score
+import model.GameState
 import i18n.*
 
 fun Container.buildHistory(historyContainer: Container, menuContainer: Container) {
@@ -16,10 +15,10 @@ fun Container.buildHistory(historyContainer: Container, menuContainer: Container
 
         fun refreshHistory() {
             listContainer.removeChildren()
-            if (history.isEmpty()) {
+            if (GameState.history.isEmpty()) {
                 listContainer.text(S().noHistory, textSize = 20.0, color = RGBA(0x80, 0x80, 0x80)) { position(210.0, 30.0) }
             } else {
-                for ((idx, entry) in history.takeLast(20).reversed().withIndex()) {
+                for ((idx, entry) in GameState.history.takeLast(20).reversed().withIndex()) {
                     val y = idx * 35.0
                     val bgColor = if (isDarkTheme) RGBA(0x20, 0x20, 0x35) else RGBA(0xe0, 0xe0, 0xf0)
                     listContainer.solidRect(520.0, 30.0, bgColor) { position(40.0, y) }
@@ -35,7 +34,7 @@ fun Container.buildHistory(historyContainer: Container, menuContainer: Container
         labeledText(this, { S().clear }, textSize = 22.0, x = 268.0, y = 609.0)
         clearBg.onOver { clearBg.color = RGBA(0xa0, 0x40, 0x40) }
         clearBg.onOut { clearBg.color = RGBA(0x80, 0x30, 0x30) }
-        clearBg.onClick { history.clear(); score.xWins = 0; score.oWins = 0; score.draws = 0; refreshHistory(); updateAllLabels() }
+        clearBg.onClick { GameState.clearAll(); refreshHistory(); updateAllLabels() }
 
         val backBg = solidRect(200.0, 45.0, RGBA(0xe9, 0x45, 0x60)) { position(200.0, 545.0) }
         labeledText(this, { S().back }, textSize = 22.0, x = 268.0, y = 554.0)

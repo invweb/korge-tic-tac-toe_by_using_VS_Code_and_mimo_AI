@@ -4,7 +4,7 @@ import korlibs.image.color.RGBA
 import korlibs.image.color.Colors
 import korlibs.korge.view.*
 import korlibs.korge.input.*
-import model.settings
+import model.GameState
 import i18n.*
 
 fun Container.buildSettings(settingsContainer: Container, menuContainer: Container) {
@@ -22,9 +22,9 @@ fun Container.buildSettings(settingsContainer: Container, menuContainer: Contain
             text(langNames[i], textSize = 12.0, color = RGBA(0x80, 0x80, 0x80)) { position(bx + 5.0, 153.0) }
             langButtons.add(btn)
         }
-        fun updateLangButtons() { for (i in langButtons.indices) langButtons[i].color = if (i == settings.langIndex) RGBA(0xe9, 0x45, 0x60) else RGBA(0x30, 0x30, 0x40) }
+        fun updateLangButtons() { for (i in langButtons.indices) langButtons[i].color = if (i == GameState.settings.langIndex) RGBA(0xe9, 0x45, 0x60) else RGBA(0x30, 0x30, 0x40) }
         updateLangButtons()
-        for (i in langButtons.indices) langButtons[i].onClick { settings.langIndex = i; updateLangButtons(); updateAllLabels() }
+        for (i in langButtons.indices) langButtons[i].onClick { GameState.settings.langIndex = i; updateLangButtons(); updateAllLabels() }
 
         labeledText(this, { S().darkMode }, textSize = 22.0, x = 210.0, y = 185.0)
         val darkBtn = solidRect(110.0, 40.0, RGBA(0x1a, 0x1a, 0x2e)) { position(180.0, 215.0) }
@@ -44,21 +44,21 @@ fun Container.buildSettings(settingsContainer: Container, menuContainer: Contain
         text("X", textSize = 28.0, color = Colors.WHITE) { position(228.0, 312.0) }
         val oBtn = solidRect(90.0, 45.0, RGBA(0x30, 0x30, 0x40)) { position(310.0, 305.0) }
         text("O", textSize = 28.0, color = Colors.WHITE) { position(338.0, 312.0) }
-        fun updateFP() { xBtn.color = if (settings.firstPlayer == "X") RGBA(0xe9, 0x45, 0x60) else RGBA(0x30, 0x30, 0x40); oBtn.color = if (settings.firstPlayer == "O") RGBA(0x0f, 0x34, 0x60) else RGBA(0x30, 0x30, 0x40) }
+        fun updateFP() { xBtn.color = if (GameState.settings.firstPlayer == "X") RGBA(0xe9, 0x45, 0x60) else RGBA(0x30, 0x30, 0x40); oBtn.color = if (GameState.settings.firstPlayer == "O") RGBA(0x0f, 0x34, 0x60) else RGBA(0x30, 0x30, 0x40) }
         updateFP()
-        xBtn.onClick { settings.firstPlayer = "X"; updateFP() }
-        oBtn.onClick { settings.firstPlayer = "O"; updateFP() }
+        xBtn.onClick { GameState.settings.firstPlayer = "X"; updateFP() }
+        oBtn.onClick { GameState.settings.firstPlayer = "O"; updateFP() }
 
         labeledText(this, { S().boardSize }, textSize = 22.0, x = 210.0, y = 365.0)
         val sizeButtons = mutableListOf<SolidRect>()
         for (sz in 3..5) {
             val bx = 190.0 + (sz - 3) * 90.0
-            val btn = solidRect(75.0, 40.0, if (settings.boardSize == sz) RGBA(0xe9, 0x45, 0x60) else RGBA(0x30, 0x30, 0x40)) { position(bx, 395.0) }
+            val btn = solidRect(75.0, 40.0, if (GameState.settings.boardSize == sz) RGBA(0xe9, 0x45, 0x60) else RGBA(0x30, 0x30, 0x40)) { position(bx, 395.0) }
             text("${sz}x${sz}", textSize = 18.0, color = Colors.WHITE) { position(bx + 14.0, 402.0) }
             sizeButtons.add(btn)
         }
-        fun updateSizeButtons() { for (i in 0..2) sizeButtons[i].color = if (settings.boardSize == i + 3) RGBA(0xe9, 0x45, 0x60) else RGBA(0x30, 0x30, 0x40) }
-        for (i in 0..2) sizeButtons[i].onClick { settings.boardSize = i + 3; updateSizeButtons() }
+        fun updateSizeButtons() { for (i in 0..2) sizeButtons[i].color = if (GameState.settings.boardSize == i + 3) RGBA(0xe9, 0x45, 0x60) else RGBA(0x30, 0x30, 0x40) }
+        for (i in 0..2) sizeButtons[i].onClick { GameState.settings.boardSize = i + 3; updateSizeButtons() }
 
         labeledText(this, { S().timer }, textSize = 22.0, x = 210.0, y = 450.0)
         val timerOpts = listOf(0, 5, 15, 30)
@@ -71,14 +71,14 @@ fun Container.buildSettings(settingsContainer: Container, menuContainer: Contain
             labeledText(this, timerLabels[idx], textSize = 14.0, x = bx + 8.0, y = 487.0)
             timerButtons.add(btn)
         }
-        fun updateTimerButtons() { for (i in timerOpts.indices) timerButtons[i].color = if (settings.timerSeconds == timerOpts[i]) RGBA(0xe9, 0x45, 0x60) else RGBA(0x30, 0x30, 0x40) }
+        fun updateTimerButtons() { for (i in timerOpts.indices) timerButtons[i].color = if (GameState.settings.timerSeconds == timerOpts[i]) RGBA(0xe9, 0x45, 0x60) else RGBA(0x30, 0x30, 0x40) }
         updateTimerButtons()
-        for (i in timerOpts.indices) timerButtons[i].onClick { settings.timerSeconds = timerOpts[i]; updateTimerButtons(); updateAllLabels() }
+        for (i in timerOpts.indices) timerButtons[i].onClick { GameState.settings.timerSeconds = timerOpts[i]; updateTimerButtons(); updateAllLabels() }
 
         labeledText(this, { S().ai }, textSize = 22.0, x = 150.0, y = 530.0)
-        val aiBtn = solidRect(120.0, 40.0, if (settings.aiEnabled) RGBA(0x0f, 0x34, 0x60) else RGBA(0x40, 0x40, 0x50)) { position(400.0, 525.0) }
-        labeledText(this, { if (settings.aiEnabled) S().on else S().off }, textSize = 20.0, x = 430.0, y = 533.0)
-        aiBtn.onClick { settings.aiEnabled = !settings.aiEnabled; aiBtn.color = if (settings.aiEnabled) RGBA(0x0f, 0x34, 0x60) else RGBA(0x40, 0x40, 0x50); updateAllLabels() }
+        val aiBtn = solidRect(120.0, 40.0, if (GameState.settings.aiEnabled) RGBA(0x0f, 0x34, 0x60) else RGBA(0x40, 0x40, 0x50)) { position(400.0, 525.0) }
+        labeledText(this, { if (GameState.settings.aiEnabled) S().on else S().off }, textSize = 20.0, x = 430.0, y = 533.0)
+        aiBtn.onClick { GameState.settings.aiEnabled = !GameState.settings.aiEnabled; aiBtn.color = if (GameState.settings.aiEnabled) RGBA(0x0f, 0x34, 0x60) else RGBA(0x40, 0x40, 0x50); updateAllLabels() }
 
         val backBg = solidRect(200.0, 45.0, RGBA(0xe9, 0x45, 0x60)) { position(200.0, 600.0) }
         labeledText(this, { S().back }, textSize = 22.0, x = 268.0, y = 609.0)

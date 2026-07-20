@@ -6,7 +6,7 @@ import korlibs.korge.view.*
 import korlibs.korge.input.*
 import korlibs.math.geom.Angle
 import korlibs.time.*
-import model.settings
+import model.GameState
 import i18n.*
 
 fun Container.buildSplash(splashContainer: Container, menuContainer: Container) {
@@ -30,16 +30,16 @@ fun Container.buildSplash(splashContainer: Container, menuContainer: Container) 
         val splashLangBtns = mutableListOf<SolidRect>()
         for (i in 0..2) {
             val bx = 190.0 + i * 75.0
-            val btn = solidRect(65.0, 30.0, if (settings.langIndex == i) RGBA(0xe9, 0x45, 0x60) else RGBA(0x30, 0x30, 0x40)) {
+            val btn = solidRect(65.0, 30.0, if (GameState.settings.langIndex == i) RGBA(0xe9, 0x45, 0x60) else RGBA(0x30, 0x30, 0x40)) {
                 position(bx, 470.0)
             }
             text(langTexts[i], textSize = 14.0, color = Colors.WHITE) { position(bx + 16.0, 476.0) }
             splashLangBtns.add(btn)
         }
-        fun updateSplashLang() { for (i in 0..2) splashLangBtns[i].color = if (settings.langIndex == i) RGBA(0xe9, 0x45, 0x60) else RGBA(0x30, 0x30, 0x40) }
+        fun updateSplashLang() { for (i in 0..2) splashLangBtns[i].color = if (GameState.settings.langIndex == i) RGBA(0xe9, 0x45, 0x60) else RGBA(0x30, 0x30, 0x40) }
         for (i in 0..2) {
             splashLangBtns[i].onClick {
-                settings.langIndex = i
+                GameState.settings.langIndex = i
                 updateSplashLang()
                 updateAllLabels()
             }

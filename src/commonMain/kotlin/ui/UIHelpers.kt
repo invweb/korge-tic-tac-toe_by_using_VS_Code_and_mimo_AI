@@ -3,7 +3,7 @@ package ui
 import korlibs.korge.view.*
 import korlibs.image.color.RGBA
 import korlibs.image.color.Colors
-import model.settings
+import model.GameState
 import i18n.*
 
 val themesDark = listOf(Triple(RGBA(0x1a, 0x1a, 0x2e), RGBA(0x16, 0x21, 0x3e), ""), Triple(RGBA(0x0a, 0x1a, 0x2e), RGBA(0x0a, 0x2a, 0x4e), ""), Triple(RGBA(0x0a, 0x2e, 0x1a), RGBA(0x0a, 0x3e, 0x16), ""))
@@ -13,11 +13,11 @@ fun currentThemes() = if (isDarkTheme) themesDark else themesLight
 fun accentColor() = if (isDarkTheme) RGBA(0xe9, 0x45, 0x60) else RGBA(0xc0, 0x30, 0x50)
 
 val allThemeNames = listOf(themesRu, themesEn, themesDe)
-fun themeName(index: Int) = allThemeNames[settings.langIndex][index]
+fun themeName(index: Int) = allThemeNames[GameState.settings.langIndex][index]
 
 val langNames = listOf("Русский", "English", "Deutsch")
 val allStrings = listOf(stringsRu, stringsEn, stringsDe)
-fun S(): Strings = allStrings[settings.langIndex]
+fun S(): Strings = allStrings[GameState.settings.langIndex]
 
 val langLabels = mutableListOf<Pair<Text, () -> String>>()
 fun updateAllLabels() { for ((view, getter) in langLabels) view.text = getter() }

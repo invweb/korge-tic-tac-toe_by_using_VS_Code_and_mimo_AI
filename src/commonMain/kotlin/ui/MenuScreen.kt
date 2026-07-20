@@ -3,8 +3,7 @@ package ui
 import korlibs.image.color.RGBA
 import korlibs.korge.view.*
 import korlibs.korge.input.*
-import model.score
-import model.settings
+import model.GameState
 import i18n.*
 
 fun Container.buildMenu(menuContainer: Container, gameContainer: Container, settingsContainer: Container, historyContainer: Container) {
@@ -13,7 +12,7 @@ fun Container.buildMenu(menuContainer: Container, gameContainer: Container, sett
         text("Tic-Tac-Toe", textSize = 48.0, color = RGBA(0xe9, 0x45, 0x60)) { position(165.0, 60.0) }
         text("X", textSize = 60.0, color = RGBA(0xe9, 0x45, 0x60)) { position(130.0, 140.0) }
         text("O", textSize = 60.0, color = RGBA(0x0f, 0x34, 0x60)) { position(410.0, 140.0) }
-        labeledText(this, { "${S().score}: X=${score.xWins}  O=${score.oWins}  ${S().draw}=${score.draws}" }, textSize = 18.0, color = RGBA(0xa0, 0xa0, 0xb0), x = 135.0, y = 220.0)
+        labeledText(this, { "${S().score}: X=${GameState.score.xWins}  O=${GameState.score.oWins}  ${S().draw}=${GameState.score.draws}" }, textSize = 18.0, color = RGBA(0xa0, 0xa0, 0xb0), x = 135.0, y = 220.0)
 
         val newGameBg = solidRect(260.0, 50.0, RGBA(0xe9, 0x45, 0x60)) { position(170.0, 280.0) }
         labeledText(this, { S().newGame }, textSize = 26.0, x = 230.0, y = 289.0)

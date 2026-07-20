@@ -14,6 +14,25 @@ data class Score(var xWins: Int = 0, var oWins: Int = 0, var draws: Int = 0)
 
 data class HistoryEntry(val winner: String, val boardSize: Int, val timestamp: String)
 
-val score = Score()
-val history = mutableListOf<HistoryEntry>()
-val settings = GameSettings()
+object GameState {
+    val score = Score()
+    val history = mutableListOf<HistoryEntry>()
+    val settings = GameSettings()
+
+    fun recordWin(winner: String, boardSize: Int, source: String) {
+        if (winner == "X") score.xWins++ else score.oWins++
+        history.add(HistoryEntry(winner, boardSize, source))
+    }
+
+    fun recordDraw(boardSize: Int, source: String) {
+        score.draws++
+        history.add(HistoryEntry("draw", boardSize, source))
+    }
+
+    fun clearAll() {
+        score.xWins = 0
+        score.oWins = 0
+        score.draws = 0
+        history.clear()
+    }
+}
