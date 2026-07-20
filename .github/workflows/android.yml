@@ -40,7 +40,7 @@ jobs:
           ANDROID_HOME: /usr/local/lib/android/sdk
 
       - name: Build Android APK
-        run: ./gradlew assembleDebug --no-daemon
+        run: ./gradlew assembleDebug --no-daemon -Porg.gradle.java.home=$JAVA_HOME
 
       - name: Upload APK
         uses: actions/upload-artifact@v4

@@ -32,7 +32,7 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Build
-        run: ./gradlew build --no-daemon
+        run: ./gradlew build --no-daemon -Porg.gradle.java.home=$JAVA_HOME
 
       - name: Run tests
-        run: ./gradlew check --no-daemon
+        run: ./gradlew check --no-daemon -Porg.gradle.java.home=$JAVA_HOME
