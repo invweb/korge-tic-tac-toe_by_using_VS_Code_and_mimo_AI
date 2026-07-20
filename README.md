@@ -64,6 +64,18 @@ To add a new language:
 1. Create `StringsXx.kt` with a new `val stringsXx = Strings(...)` instance
 2. Add it to `allStrings` and `allThemeNames` in `Main.kt`
 
+## Why is there no separate Android module?
+
+Unlike typical KMP projects, there is no `android/` or `desktop/` directory. All code lives in `src/commonMain/kotlin/` — this is the **only** source set.
+
+KorGE works differently from standard Compose Multiplatform:
+- The `korge { targetAndroid() }` plugin in `build.gradle.kts` tells KorGE to compile the same `commonMain` code for both Desktop (JVM) and Android (APK)
+- KorGE provides its own rendering, input, and UI layers — so there are no platform-specific wrappers needed
+- The Android manifest is generated automatically by the KorGE plugin
+- You run Desktop with `./gradlew runJvm` and Android with `./gradlew runAndroidEmulatorDebug` — both read from `src/commonMain/`
+
+In short: **one codebase, two targets, zero platform-specific directories.**
+
 ## Project Structure
 
 ```
@@ -147,6 +159,18 @@ JAVA_HOME=/path/to/jdk21 ./gradlew runAndroidEmulatorDebug
 Чтобы добавить новый язык:
 1. Создать `StringsXx.kt` с новым экземпляром `val stringsXx = Strings(...)`
 2. Добавить его в `allStrings` и `allThemeNames` в `Main.kt`
+
+## Почему нет отдельного модуля Android?
+
+В отличие от типичных KMP-проектов, здесь нет директорий `android/` или `desktop/`. Весь код лежит в `src/commonMain/kotlin/` — это **единственный** набор исходников.
+
+KorGE работает иначе, чем стандартный Compose Multiplatform:
+- Плагин `korge { targetAndroid() }` в `build.gradle.kts` указывает KorGE компилировать один и тот же код `commonMain` и для Desktop (JVM), и для Android (APK)
+- KorGE предоставляет свои слои рендеринга, ввода и UI — поэтому обёртки под конкретные платформы не нужны
+- Android-манифест генерируется автоматически плагином KorGE
+- Desktop запускается через `./gradlew runJvm`, Android через `./gradlew runAndroidEmulatorDebug` — обе команды используют `src/commonMain/`
+
+Короче: **одна кодовая база, две платформы, ноль директорий под конкретные платформы.**
 
 ## Структура проекта
 
