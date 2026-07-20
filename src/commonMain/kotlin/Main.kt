@@ -5,6 +5,7 @@ import korlibs.image.color.*
 import korlibs.math.geom.*
 import korlibs.math.geom.Angle
 import korlibs.time.*
+import i18n.*
 
 data class GameSettings(
     var firstPlayer: String = "X",
@@ -28,28 +29,10 @@ var isDarkTheme = true
 fun currentThemes() = if (isDarkTheme) themesDark else themesLight
 fun accentColor() = if (isDarkTheme) RGBA(0xe9, 0x45, 0x60) else RGBA(0xc0, 0x30, 0x50)
 
-val themesRu = listOf("Тёмная", "Синяя", "Зелёная")
-val themesEn = listOf("Dark", "Blue", "Green")
-val themesDe = listOf("Dunkel", "Blau", "Grün")
-val allThemes = listOf(themesRu, themesEn, themesDe)
-fun themeName(index: Int) = allThemes[settings.langIndex][index]
+val allThemeNames = listOf(themesRu, themesEn, themesDe)
+fun themeName(index: Int) = allThemeNames[settings.langIndex][index]
 
 val langNames = listOf("Русский", "English", "Deutsch")
-
-data class Strings(
-    val tapToStart: String, val newGame: String, val settings: String, val exit: String,
-    val back: String, val firstTurn: String, val colorTheme: String, val grid: String,
-    val on: String, val off: String, val turn: String, val winner: String, val draw: String,
-    val restart: String, val menu: String, val language: String, val score: String,
-    val boardSize: String, val timer: String, val seconds5: String,
-    val seconds15: String, val seconds30: String, val ai: String, val history: String,
-    val clear: String, val darkMode: String, val light: String, val dark: String,
-    val noHistory: String, val timerExpired: String
-)
-
-val stringsRu = Strings("Нажмите для начала", "Новая игра", "Настройки", "Выход", "Назад", "Первый ход", "Цветовая тема", "Сетка", "Вкл", "Выкл", "Ход", "Победил", "Ничья!", "Заново", "Меню", "Язык", "Счёт", "Размер поля", "Таймер", "5 сек", "15 сек", "30 сек", "ИИ-противник", "История", "Очистить", "Тёмный режим", "Светлая", "Тёмная", "Нет истории", "Время вышло!")
-val stringsEn = Strings("Tap to start", "New Game", "Settings", "Exit", "Back", "First turn", "Color theme", "Grid", "On", "Off", "Turn", "Winner", "Draw!", "Restart", "Menu", "Language", "Score", "Board size", "Timer", "5 sec", "15 sec", "30 sec", "AI opponent", "History", "Clear", "Dark mode", "Light", "Dark", "No history", "Time's up!")
-val stringsDe = Strings("Tippen zum Starten", "Neues Spiel", "Einstellungen", "Beenden", "Zurück", "Erster Zug", "Farbschema", "Gitter", "Ein", "Aus", "Zug", "Gewinner", "Unentschieden!", "Neustart", "Menü", "Sprache", "Punkte", "Spielfeld", "Timer", "5 Sek", "15 Sek", "30 Sek", "KI-Gegner", "Verlauf", "Löschen", "Dunkler Modus", "Hell", "Dunkel", "Kein Verlauf", "Zeit abgelaufen!")
 
 val allStrings = listOf(stringsRu, stringsEn, stringsDe)
 fun S(): Strings = allStrings[settings.langIndex]
@@ -93,6 +76,29 @@ fun Container.buildSplash(splashContainer: Container, menuContainer: Container) 
         val subtitleText = text("KorGE Edition", textSize = 22.0, color = Colors.WHITE) { position(230.0, 380.0); alpha = 0.0 }
         val tapText = labeledText(this, { S().tapToStart }, textSize = 18.0, color = RGBA(0x80, 0x80, 0x80), x = 190.0, y = 440.0)
         tapText.alpha = 0.0
+
+        val tapArea = solidRect(300.0, 40.0, RGBA(0x00, 0x00, 0x00, 0x0)) { position(150.0, 430.0) }
+        tapArea.onClick { splashContainer.visible = false; menuContainer.visible = true }
+
+        val langTexts = listOf("RU", "EN", "DE")
+        val splashLangBtns = mutableListOf<SolidRect>()
+        for (i in 0..2) {
+            val bx = 190.0 + i * 75.0
+            val btn = solidRect(65.0, 30.0, if (settings.langIndex == i) RGBA(0xe9, 0x45, 0x60) else RGBA(0x30, 0x30, 0x40)) {
+                position(bx, 470.0)
+            }
+            text(langTexts[i], textSize = 14.0, color = Colors.WHITE) { position(bx + 16.0, 476.0) }
+            splashLangBtns.add(btn)
+        }
+        fun updateSplashLang() { for (i in 0..2) splashLangBtns[i].color = if (settings.langIndex == i) RGBA(0xe9, 0x45, 0x60) else RGBA(0x30, 0x30, 0x40) }
+        for (i in 0..2) {
+            splashLangBtns[i].onClick {
+                settings.langIndex = i
+                updateSplashLang()
+                updateAllLabels()
+            }
+        }
+
         var time = 0.0
         addUpdater {
             time += it.seconds
@@ -103,7 +109,6 @@ fun Container.buildSplash(splashContainer: Container, menuContainer: Container) 
             xDecor.rotation = Angle.fromRadians(kotlin.math.sin(time * 0.5))
             oDecor.rotation = Angle.fromRadians(kotlin.math.cos(time * 0.5))
         }
-        onClick { splashContainer.visible = false; menuContainer.visible = true }
     }
 }
 
