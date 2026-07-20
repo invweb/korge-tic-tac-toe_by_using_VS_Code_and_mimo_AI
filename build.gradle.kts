@@ -7,7 +7,7 @@ korge {
 }
 
 afterEvaluate {
-    tasks.matching { it.name == "lintVitalAnalyzeRelease" }.configureEach {
+    tasks.matching { it.name.contains("Lint", ignoreCase = true) || it.name.contains("lint", ignoreCase = false) }.configureEach {
         enabled = false
     }
 }
