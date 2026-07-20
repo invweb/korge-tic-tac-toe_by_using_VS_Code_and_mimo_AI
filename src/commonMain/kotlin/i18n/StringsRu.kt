@@ -24,13 +24,18 @@ val stringsRu = Strings(
     seconds15 = "15 сек",
     seconds30 = "30 сек",
     ai = "ИИ-противник",
+    aiEasy = "Лёгкий",
+    aiMedium = "Средний",
+    aiHard = "Сложный",
+    aiDifficulty = "Сложность ИИ",
     history = "История",
     clear = "Очистить",
     darkMode = "Тёмный режим",
     light = "Светлая",
     dark = "Тёмная",
     noHistory = "Нет истории",
-    timerExpired = "Время вышло!"
+    timerExpired = "Время вышло!",
+    undo = "Отменить ход"
 )
 
 val themesRu = listOf("Тёмная", "Синяя", "Зелёная")

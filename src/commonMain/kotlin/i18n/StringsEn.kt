@@ -24,13 +24,18 @@ val stringsEn = Strings(
     seconds15 = "15 sec",
     seconds30 = "30 sec",
     ai = "AI opponent",
+    aiEasy = "Easy",
+    aiMedium = "Medium",
+    aiHard = "Hard",
+    aiDifficulty = "AI difficulty",
     history = "History",
     clear = "Clear",
     darkMode = "Dark mode",
     light = "Light",
     dark = "Dark",
     noHistory = "No history",
-    timerExpired = "Time's up!"
+    timerExpired = "Time's up!",
+    undo = "Undo move"
 )
 
 val themesEn = listOf("Dark", "Blue", "Green")

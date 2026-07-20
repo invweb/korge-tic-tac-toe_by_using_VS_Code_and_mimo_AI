@@ -24,11 +24,16 @@ data class Strings(
     val seconds15: String,
     val seconds30: String,
     val ai: String,
+    val aiEasy: String,
+    val aiMedium: String,
+    val aiHard: String,
+    val aiDifficulty: String,
     val history: String,
     val clear: String,
     val darkMode: String,
     val light: String,
     val dark: String,
     val noHistory: String,
-    val timerExpired: String
+    val timerExpired: String,
+    val undo: String
 )

@@ -24,7 +24,7 @@ fun Container.buildSettings(settingsContainer: Container, menuContainer: Contain
         }
         fun updateLangButtons() { for (i in langButtons.indices) langButtons[i].color = if (i == GameState.settings.langIndex) RGBA(0xe9, 0x45, 0x60) else RGBA(0x30, 0x30, 0x40) }
         updateLangButtons()
-        for (i in langButtons.indices) langButtons[i].onClick { GameState.settings.langIndex = i; updateLangButtons(); updateAllLabels() }
+        for (i in langButtons.indices) langButtons[i].onClick { GameState.updateSettings { langIndex = i }; updateLangButtons(); updateAllLabels() }
 
         labeledText(this, { S().darkMode }, textSize = 22.0, x = 210.0, y = 185.0)
         val darkBtn = solidRect(110.0, 40.0, RGBA(0x1a, 0x1a, 0x2e)) { position(180.0, 215.0) }
@@ -46,8 +46,8 @@ fun Container.buildSettings(settingsContainer: Container, menuContainer: Contain
         text("O", textSize = 28.0, color = Colors.WHITE) { position(338.0, 312.0) }
         fun updateFP() { xBtn.color = if (GameState.settings.firstPlayer == "X") RGBA(0xe9, 0x45, 0x60) else RGBA(0x30, 0x30, 0x40); oBtn.color = if (GameState.settings.firstPlayer == "O") RGBA(0x0f, 0x34, 0x60) else RGBA(0x30, 0x30, 0x40) }
         updateFP()
-        xBtn.onClick { GameState.settings.firstPlayer = "X"; updateFP() }
-        oBtn.onClick { GameState.settings.firstPlayer = "O"; updateFP() }
+        xBtn.onClick { GameState.updateSettings { firstPlayer = "X" }; updateFP() }
+        oBtn.onClick { GameState.updateSettings { firstPlayer = "O" }; updateFP() }
 
         labeledText(this, { S().boardSize }, textSize = 22.0, x = 210.0, y = 365.0)
         val sizeButtons = mutableListOf<SolidRect>()
@@ -58,7 +58,7 @@ fun Container.buildSettings(settingsContainer: Container, menuContainer: Contain
             sizeButtons.add(btn)
         }
         fun updateSizeButtons() { for (i in 0..2) sizeButtons[i].color = if (GameState.settings.boardSize == i + 3) RGBA(0xe9, 0x45, 0x60) else RGBA(0x30, 0x30, 0x40) }
-        for (i in 0..2) sizeButtons[i].onClick { GameState.settings.boardSize = i + 3; updateSizeButtons() }
+        for (i in 0..2) sizeButtons[i].onClick { GameState.updateSettings { boardSize = i + 3 }; updateSizeButtons() }
 
         labeledText(this, { S().timer }, textSize = 22.0, x = 210.0, y = 450.0)
         val timerOpts = listOf(0, 5, 15, 30)
@@ -73,15 +73,30 @@ fun Container.buildSettings(settingsContainer: Container, menuContainer: Contain
         }
         fun updateTimerButtons() { for (i in timerOpts.indices) timerButtons[i].color = if (GameState.settings.timerSeconds == timerOpts[i]) RGBA(0xe9, 0x45, 0x60) else RGBA(0x30, 0x30, 0x40) }
         updateTimerButtons()
-        for (i in timerOpts.indices) timerButtons[i].onClick { GameState.settings.timerSeconds = timerOpts[i]; updateTimerButtons(); updateAllLabels() }
+        for (i in timerOpts.indices) timerButtons[i].onClick { GameState.updateSettings { timerSeconds = timerOpts[i] }; updateTimerButtons(); updateAllLabels() }
 
         labeledText(this, { S().ai }, textSize = 22.0, x = 150.0, y = 530.0)
         val aiBtn = solidRect(120.0, 40.0, if (GameState.settings.aiEnabled) RGBA(0x0f, 0x34, 0x60) else RGBA(0x40, 0x40, 0x50)) { position(400.0, 525.0) }
         labeledText(this, { if (GameState.settings.aiEnabled) S().on else S().off }, textSize = 20.0, x = 430.0, y = 533.0)
-        aiBtn.onClick { GameState.settings.aiEnabled = !GameState.settings.aiEnabled; aiBtn.color = if (GameState.settings.aiEnabled) RGBA(0x0f, 0x34, 0x60) else RGBA(0x40, 0x40, 0x50); updateAllLabels() }
+        aiBtn.onClick { GameState.updateSettings { aiEnabled = !aiEnabled }; aiBtn.color = if (GameState.settings.aiEnabled) RGBA(0x0f, 0x34, 0x60) else RGBA(0x40, 0x40, 0x50); updateAllLabels() }
 
-        val backBg = solidRect(200.0, 45.0, RGBA(0xe9, 0x45, 0x60)) { position(200.0, 600.0) }
-        labeledText(this, { S().back }, textSize = 22.0, x = 268.0, y = 609.0)
+        labeledText(this, { S().aiDifficulty }, textSize = 18.0, x = 150.0, y = 575.0)
+        val diffOpts = listOf(0, 1, 2)
+        val diffLabels = listOf({ S().aiEasy }, { S().aiMedium }, { S().aiHard })
+        val diffButtons = mutableListOf<SolidRect>()
+        for (i in diffOpts.indices) {
+            val bx = 140.0 + i * 110.0
+            val btn = solidRect(95.0, 35.0, RGBA(0x30, 0x30, 0x40)) { position(bx, 600.0) }
+            val idx = i
+            labeledText(this, diffLabels[idx], textSize = 14.0, x = bx + 8.0, y = 607.0)
+            diffButtons.add(btn)
+        }
+        fun updateDiffButtons() { for (i in diffOpts.indices) diffButtons[i].color = if (GameState.settings.aiDifficulty == diffOpts[i]) RGBA(0xe9, 0x45, 0x60) else RGBA(0x30, 0x30, 0x40) }
+        updateDiffButtons()
+        for (i in diffOpts.indices) diffButtons[i].onClick { GameState.updateSettings { aiDifficulty = diffOpts[i] }; updateDiffButtons(); updateAllLabels() }
+
+        val backBg = solidRect(200.0, 45.0, RGBA(0xe9, 0x45, 0x60)) { position(200.0, 645.0) }
+        labeledText(this, { S().back }, textSize = 22.0, x = 268.0, y = 654.0)
         backBg.onOver { backBg.color = RGBA(0xff, 0x5a, 0x7a) }
         backBg.onOut { backBg.color = RGBA(0xe9, 0x45, 0x60) }
         backBg.onClick { settingsContainer.visible = false; menuContainer.visible = true }

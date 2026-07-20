@@ -6,7 +6,7 @@ import korlibs.korge.view.*
 import korlibs.korge.input.*
 import korlibs.time.*
 import model.GameState
-import logic.checkWinBoard
+import logic.findWinLine
 import logic.findBestMove
 import i18n.*
 
@@ -27,6 +27,9 @@ fun Container.buildGame(gameContainer: Container, menuContainer: Container) {
         var timerValue = GameState.settings.timerSeconds
         val timerActive = GameState.settings.timerSeconds > 0
         var lastTimerUpdate = 0.0
+
+        data class MoveSnapshot(val boardState: Array<Array<String>>, val turn: String)
+        val moveHistory = mutableListOf<MoveSnapshot>()
 
         val totalGrid = 450.0
         val cellSize = (totalGrid - (n - 1) * 4.0) / n
@@ -62,10 +65,39 @@ fun Container.buildGame(gameContainer: Container, menuContainer: Container) {
             }
         }
 
+        fun animateWinLine(line: List<Pair<Int, Int>>) {
+            var elapsed = 0.0
+            addUpdater {
+                elapsed += it.seconds
+                val brightness = (kotlin.math.sin(elapsed * 6.0) * 0.3 + 0.7).coerceIn(0.0, 1.0)
+                for ((r, c) in line) {
+                    val cv = cells.first { it.row == r && it.col == c }
+                    val cr = (accent.r.toInt() * brightness).toInt()
+                    val cg = (accent.g.toInt() * brightness).toInt()
+                    val cb = (accent.b.toInt() * brightness).toInt()
+                    cv.bg.color = RGBA(cr.coerceIn(0, 255), cg.coerceIn(0, 255), cb.coerceIn(0, 255))
+                }
+            }
+        }
+
+        fun syncBoardToCells() {
+            for (cell in cells) {
+                val v = board[cell.row][cell.col]
+                cell.txt.text = v
+                cell.txt.color = if (v == "X") accent else if (v == "O") RGBA(0x0f, 0x34, 0x60) else Colors.WHITE
+                cell.bg.color = if (v.isEmpty()) cellColor else cell.bg.color
+            }
+        }
+
+        fun saveSnapshot(): MoveSnapshot {
+            val snap = Array(n) { r -> Array(n) { c -> board[r][c] } }
+            return MoveSnapshot(snap, currentTurn)
+        }
+
         fun aiMove() {
             if (!GameState.settings.aiEnabled || gameOver) return
             val aiMark = currentTurn
-            val move = findBestMove(board, aiMark)
+            val move = findBestMove(board, aiMark, GameState.settings.aiDifficulty)
             if (move != null) {
                 val (r, c) = move
                 board[r][c] = aiMark
@@ -73,11 +105,13 @@ fun Container.buildGame(gameContainer: Container, menuContainer: Container) {
                 cv.txt.text = aiMark
                 cv.txt.color = if (aiMark == "X") accent else RGBA(0x0f, 0x34, 0x60)
 
-                if (checkWinBoard(board, aiMark)) {
+                val winLine = findWinLine(board, aiMark)
+                if (winLine != null) {
                     statusText.text = "${S().winner}: $aiMark!"
                     statusText.color = accent
                     gameOver = true
                     GameState.recordWin(aiMark, n, "AI")
+                    animateWinLine(winLine)
                 } else if (board.all { row -> row.all { it.isNotEmpty() } }) {
                     statusText.text = S().draw
                     statusText.color = RGBA(0xf5, 0xa6, 0x23)
@@ -100,15 +134,18 @@ fun Container.buildGame(gameContainer: Container, menuContainer: Container) {
 
             cellBg.onClick {
                 if (!gameOver && board[r][c].isEmpty() && (!GameState.settings.aiEnabled || currentTurn == GameState.settings.firstPlayer)) {
+                    moveHistory.add(saveSnapshot())
                     board[r][c] = currentTurn
                     cellText.text = currentTurn
                     cellText.color = if (currentTurn == "X") accent else RGBA(0x0f, 0x34, 0x60)
 
-                    if (checkWinBoard(board, currentTurn)) {
+                    val winLine = findWinLine(board, currentTurn)
+                    if (winLine != null) {
                         statusText.text = "${S().winner}: $currentTurn!"
                         statusText.color = accent
                         gameOver = true
                         GameState.recordWin(currentTurn, n, "you")
+                        animateWinLine(winLine)
                     } else if (board.all { row2 -> row2.all { it.isNotEmpty() } }) {
                         statusText.text = S().draw
                         statusText.color = RGBA(0xf5, 0xa6, 0x23)
@@ -148,12 +185,32 @@ fun Container.buildGame(gameContainer: Container, menuContainer: Container) {
         }
 
         val btnY = gridOffsetY + totalGrid + 65.0
-        val restartBg = solidRect(200.0, 45.0, RGBA(0xe9, 0x45, 0x60)) { position(95.0, btnY) }
-        labeledText(this, { S().restart }, textSize = 22.0, x = 153.0, y = btnY + 10.0)
-        val menuBg = solidRect(200.0, 45.0, RGBA(0x0f, 0x34, 0x60)) { position(305.0, btnY) }
-        labeledText(this, { S().menu }, textSize = 22.0, x = 377.0, y = btnY + 10.0)
+        val undoBg = solidRect(120.0, 45.0, RGBA(0x60, 0x60, 0x80)) { position(25.0, btnY) }
+        labeledText(this, { S().undo }, textSize = 18.0, x = 42.0, y = btnY + 10.0)
+        undoBg.onOver { undoBg.color = RGBA(0x80, 0x80, 0xa0) }
+        undoBg.onOut { undoBg.color = RGBA(0x60, 0x60, 0x80) }
+
+        val restartBg = solidRect(200.0, 45.0, RGBA(0xe9, 0x45, 0x60)) { position(160.0, btnY) }
+        labeledText(this, { S().restart }, textSize = 22.0, x = 218.0, y = btnY + 10.0)
+        val menuBg = solidRect(200.0, 45.0, RGBA(0x0f, 0x34, 0x60)) { position(400.0, btnY) }
+        labeledText(this, { S().menu }, textSize = 22.0, x = 472.0, y = btnY + 10.0)
         menuBg.onOver { menuBg.color = RGBA(0x1a, 0x50, 0x80) }
         menuBg.onOut { menuBg.color = RGBA(0x0f, 0x34, 0x60) }
+
+        undoBg.onClick {
+            if (moveHistory.isNotEmpty()) {
+                val prev = moveHistory.removeAt(moveHistory.lastIndex)
+                for (r2 in 0 until n) for (c2 in 0 until n) board[r2][c2] = prev.boardState[r2][c2]
+                currentTurn = prev.turn
+                gameOver = false
+                timerValue = GameState.settings.timerSeconds
+                lastTimerUpdate = 0.0
+                statusText.text = "${S().turn}: $currentTurn"
+                statusText.color = accent
+                syncBoardToCells()
+                if (timerText != null) timerText.text = "$timerValue"
+            }
+        }
 
         fun resetBoard() {
             for (r2 in 0 until n) for (c2 in 0 until n) board[r2][c2] = ""
@@ -161,6 +218,7 @@ fun Container.buildGame(gameContainer: Container, menuContainer: Container) {
             gameOver = false
             timerValue = GameState.settings.timerSeconds
             lastTimerUpdate = 0.0
+            moveHistory.clear()
             updateAllLabels()
             for (cell in cells) { cell.txt.text = ""; cell.bg.color = cellColor }
             if (timerText != null) timerText.text = "$timerValue"

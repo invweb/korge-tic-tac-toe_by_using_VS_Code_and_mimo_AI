@@ -39,7 +39,7 @@ fun Container.buildSplash(splashContainer: Container, menuContainer: Container) 
         fun updateSplashLang() { for (i in 0..2) splashLangBtns[i].color = if (GameState.settings.langIndex == i) RGBA(0xe9, 0x45, 0x60) else RGBA(0x30, 0x30, 0x40) }
         for (i in 0..2) {
             splashLangBtns[i].onClick {
-                GameState.settings.langIndex = i
+                GameState.updateSettings { langIndex = i }
                 updateSplashLang()
                 updateAllLabels()
             }
