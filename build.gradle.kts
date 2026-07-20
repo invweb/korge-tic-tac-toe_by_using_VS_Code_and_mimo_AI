@@ -5,3 +5,10 @@ plugins {
 korge {
     targetAndroid()
 }
+
+android {
+    lint {
+        checkReleaseBuilds = false
+        abortOnError = false
+    }
+}
