@@ -1,5 +1,68 @@
 # Tic-Tac-Toe — KorGE Edition
 
+Tic-Tac-Toe built with [KorGE](https://korge.org/) — Kotlin Multiplatform Game Engine.
+
+Runs on **Desktop (JVM)** and **Android**.
+
+## Screenshots
+
+### Splash Screen
+![Splash](screenshots/screenshot_splash.png)
+
+### Menu
+![Menu](screenshots/screenshot_menu.png)
+
+## How to Run
+
+### Desktop
+```bash
+JAVA_HOME=/path/to/jdk21 ./gradlew runJvm
+```
+
+### Android (emulator)
+```bash
+JAVA_HOME=/path/to/jdk21 ./gradlew runAndroidEmulatorDebug
+```
+
+> Requires JDK 21+ and Android SDK (for Android target).
+
+## Features
+
+- **Splash screen** with animated X/O and fade-in text
+- **Main menu** with New Game, Settings, History, and Exit
+- **Game board** with click-based X/O placement, win and draw detection
+- **AI opponent** (Minimax algorithm)
+- **Move timer** (5 / 15 / 30 seconds or off)
+- **Board size** — 3×3, 4×4, 5×5
+- **3 color themes** — Dark, Blue, Green
+- **Dark / Light mode** toggle
+- **Scoreboard** — X wins, O wins, and draws
+- **Game history** — last 20 games with clear button
+- **Multi-language** — Russian, English, German with live UI updates
+- **Grid lines** — toggle on/off
+
+## Tech Stack
+
+- Kotlin 2.0.20
+- KorGE 6.0.0
+- JDK 21
+- Gradle 8.9
+
+## Project Structure
+
+```
+├── build.gradle.kts          # KorGE plugin + Android target
+├── settings.gradle.kts       # Repositories
+├── local.properties          # Android SDK path
+├── src/commonMain/kotlin/
+│   └── Main.kt               # Entire application code
+└── screenshots/              # Screenshots
+```
+
+---
+
+# Tic-Tac-Toe — Коротко о проекте
+
 Крестики-нолики на [KorGE](https://korge.org/) — Kotlin Multiplatform Game Engine.
 
 Работает на **Desktop (JVM)** и **Android**.
