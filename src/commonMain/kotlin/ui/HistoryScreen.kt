@@ -8,7 +8,7 @@ import i18n.*
 
 fun Container.buildHistory(historyContainer: Container, menuContainer: Container) {
     historyContainer.apply {
-        solidRect(600.0, 700.0, RGBA(0x1a, 0x1a, 0x2e))
+        solidRect(600.0, 800.0, RGBA(0x1a, 0x1a, 0x2e))
         labeledText(this, { S().history }, textSize = 38.0, color = accentColor(), x = 210.0, y = 30.0)
 
         val listContainer = container { position(0.0, 90.0) }

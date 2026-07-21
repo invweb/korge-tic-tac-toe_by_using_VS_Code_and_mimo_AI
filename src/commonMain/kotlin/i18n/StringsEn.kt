@@ -35,7 +35,17 @@ val stringsEn = Strings(
     dark = "Dark",
     noHistory = "No history",
     timerExpired = "Time's up!",
-    undo = "Undo move"
+    undo = "Undo move",
+    twoPlayers = "Two Players",
+    vsAi = "vs AI",
+    statistics = "Statistics",
+    totalGames = "Total games",
+    wins = "Wins",
+    drawsStat = "Draws",
+    winRate = "Win rate",
+    byBoardSize = "By board size",
+    byMode = "By mode",
+    gamesPlayed = "games"
 )
 
-val themesEn = listOf("Dark", "Blue", "Green")
+val themesEn = listOf("Dark", "Blue", "Green", "Red", "Orange", "Teal")

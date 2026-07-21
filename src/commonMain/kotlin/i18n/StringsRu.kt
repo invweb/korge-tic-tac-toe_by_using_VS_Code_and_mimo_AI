@@ -35,7 +35,17 @@ val stringsRu = Strings(
     dark = "Тёмная",
     noHistory = "Нет истории",
     timerExpired = "Время вышло!",
-    undo = "Отменить ход"
+    undo = "Отменить ход",
+    twoPlayers = "Два игрока",
+    vsAi = "Против ИИ",
+    statistics = "Статистика",
+    totalGames = "Всего игр",
+    wins = "Победы",
+    drawsStat = "Ничьи",
+    winRate = "Процент побед",
+    byBoardSize = "По размеру поля",
+    byMode = "По режиму",
+    gamesPlayed = "игр"
 )
 
-val themesRu = listOf("Тёмная", "Синяя", "Зелёная")
+val themesRu = listOf("Тёмная", "Синяя", "Зелёная", "Красная", "Оранжевая", "Бирюзовая")

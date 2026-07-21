@@ -35,5 +35,15 @@ data class Strings(
     val dark: String,
     val noHistory: String,
     val timerExpired: String,
-    val undo: String
+    val undo: String,
+    val twoPlayers: String,
+    val vsAi: String,
+    val statistics: String,
+    val totalGames: String,
+    val wins: String,
+    val drawsStat: String,
+    val winRate: String,
+    val byBoardSize: String,
+    val byMode: String,
+    val gamesPlayed: String
 )

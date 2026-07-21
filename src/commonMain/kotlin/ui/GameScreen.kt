@@ -2,6 +2,7 @@ package ui
 
 import korlibs.image.color.RGBA
 import korlibs.image.color.Colors
+import korlibs.image.text.TextAlignment
 import korlibs.korge.view.*
 import korlibs.korge.input.*
 import korlibs.time.*
@@ -15,10 +16,12 @@ fun Container.buildGame(gameContainer: Container, menuContainer: Container) {
     val bgColor = bg.first
     val cellColor = bg.second
     val accent = accentColor()
+    val gameViews = gameContainer.stage!!.views
 
     gameContainer.apply {
-        solidRect(600.0, 700.0, bgColor)
-        text("Tic-Tac-Toe", textSize = 36.0, color = accent) { position(205.0, 10.0) }
+        solidRect(600.0, 800.0, bgColor)
+        val modeLabel = if (GameState.settings.multiplayer) S().twoPlayers else S().vsAi
+        text("Tic-Tac-Toe [$modeLabel]", textSize = 28.0, color = accent) { position(130.0, 10.0) }
 
         val n = GameState.settings.boardSize
         val board = Array(n) { Array(n) { "" } }
@@ -31,15 +34,20 @@ fun Container.buildGame(gameContainer: Container, menuContainer: Container) {
         data class MoveSnapshot(val boardState: Array<Array<String>>, val turn: String)
         val moveHistory = mutableListOf<MoveSnapshot>()
 
-        val totalGrid = 450.0
+        val totalGrid = 380.0
         val cellSize = (totalGrid - (n - 1) * 4.0) / n
         val gridOffsetX = (600.0 - totalGrid) / 2
-        val gridOffsetY = 55.0
+        val gridOffsetY = 50.0
 
         labeledText(this, { "X=${GameState.score.xWins}  O=${GameState.score.oWins}  ${S().draw}=${GameState.score.draws}" }, textSize = 16.0, color = RGBA(0xa0, 0xa0, 0xb0), x = 195.0, y = gridOffsetY + totalGrid + 12.0)
 
         val statusY = gridOffsetY + totalGrid + 35.0
-        val statusText = labeledText(this, { "${S().turn}: $currentTurn" }, textSize = 24.0, x = 250.0, y = statusY)
+        fun playerLabel(mark: String): String {
+            return if (GameState.settings.multiplayer) {
+                if (mark == "X") "Игрок 1 (X)" else "Игрок 2 (O)"
+            } else "$mark"
+        }
+        val statusText = labeledText(this, { "${S().turn}: ${playerLabel(currentTurn)}" }, textSize = 22.0, x = 200.0, y = statusY)
 
         val timerText = if (timerActive) {
             labeledText(this, { "$timerValue" }, textSize = 22.0, color = RGBA(0xf5, 0xa6, 0x23), x = 500.0, y = statusY)
@@ -104,6 +112,7 @@ fun Container.buildGame(gameContainer: Container, menuContainer: Container) {
                 val cv = cells.first { it.row == r && it.col == c }
                 cv.txt.text = aiMark
                 cv.txt.color = if (aiMark == "X") accent else RGBA(0x0f, 0x34, 0x60)
+                SoundManager.playMove(gameViews)
 
                 val winLine = findWinLine(board, aiMark)
                 if (winLine != null) {
@@ -111,15 +120,17 @@ fun Container.buildGame(gameContainer: Container, menuContainer: Container) {
                     statusText.color = accent
                     gameOver = true
                     GameState.recordWin(aiMark, n, "AI")
+                    SoundManager.playWin(gameViews)
                     animateWinLine(winLine)
                 } else if (board.all { row -> row.all { it.isNotEmpty() } }) {
                     statusText.text = S().draw
                     statusText.color = RGBA(0xf5, 0xa6, 0x23)
                     gameOver = true
                     GameState.recordDraw(n, "AI")
+                    SoundManager.playDraw(gameViews)
                 } else {
                     currentTurn = if (currentTurn == "X") "O" else "X"
-                    statusText.text = "${S().turn}: $currentTurn"
+                    statusText.text = "${S().turn}: ${playerLabel(currentTurn)}"
                     timerValue = GameState.settings.timerSeconds
                     lastTimerUpdate = 0.0
                 }
@@ -138,22 +149,26 @@ fun Container.buildGame(gameContainer: Container, menuContainer: Container) {
                     board[r][c] = currentTurn
                     cellText.text = currentTurn
                     cellText.color = if (currentTurn == "X") accent else RGBA(0x0f, 0x34, 0x60)
+                    SoundManager.playMove(gameViews)
 
                     val winLine = findWinLine(board, currentTurn)
+                    val source = if (GameState.settings.multiplayer) "multiplayer" else "you"
                     if (winLine != null) {
                         statusText.text = "${S().winner}: $currentTurn!"
                         statusText.color = accent
                         gameOver = true
-                        GameState.recordWin(currentTurn, n, "you")
+                        GameState.recordWin(currentTurn, n, source)
+                        SoundManager.playWin(gameViews)
                         animateWinLine(winLine)
                     } else if (board.all { row2 -> row2.all { it.isNotEmpty() } }) {
                         statusText.text = S().draw
                         statusText.color = RGBA(0xf5, 0xa6, 0x23)
                         gameOver = true
-                        GameState.recordDraw(n, "you")
+                        GameState.recordDraw(n, source)
+                        SoundManager.playDraw(gameViews)
                     } else {
                         currentTurn = if (currentTurn == "X") "O" else "X"
-                        statusText.text = "${S().turn}: $currentTurn"
+                        statusText.text = "${S().turn}: ${playerLabel(currentTurn)}"
                         timerValue = GameState.settings.timerSeconds
                         lastTimerUpdate = 0.0
                         if (GameState.settings.aiEnabled) aiMove()
@@ -172,12 +187,14 @@ fun Container.buildGame(gameContainer: Container, menuContainer: Container) {
                         lastTimerUpdate -= 1.0
                         timerValue--
                         if (timerText != null) timerText.text = "$timerValue"
+                        SoundManager.playTick(gameViews)
                         if (timerValue <= 0) {
                             gameOver = true
                             val winner = if (currentTurn == "X") "O" else "X"
                             statusText.text = "${S().timerExpired} ${S().winner}: $winner"
                             statusText.color = RGBA(0xf5, 0xa6, 0x23)
                             GameState.recordWin(winner, n, "timeout")
+                            SoundManager.playWin(gameViews)
                         }
                     }
                 }
@@ -185,15 +202,30 @@ fun Container.buildGame(gameContainer: Container, menuContainer: Container) {
         }
 
         val btnY = gridOffsetY + totalGrid + 65.0
-        val undoBg = solidRect(120.0, 45.0, RGBA(0x60, 0x60, 0x80)) { position(25.0, btnY) }
-        labeledText(this, { S().undo }, textSize = 18.0, x = 42.0, y = btnY + 10.0)
+        val undoContainer = container { position(20.0, btnY) }
+        val undoBg = undoContainer.solidRect(180.0, 45.0, RGBA(0x60, 0x60, 0x80))
+        undoContainer.text("", textSize = 18.0, color = Colors.WHITE) {
+            position(90.0, 13.0)
+            alignment = TextAlignment.CENTER
+            addUpdater { text = S().undo }
+        }
         undoBg.onOver { undoBg.color = RGBA(0x80, 0x80, 0xa0) }
         undoBg.onOut { undoBg.color = RGBA(0x60, 0x60, 0x80) }
 
-        val restartBg = solidRect(200.0, 45.0, RGBA(0xe9, 0x45, 0x60)) { position(160.0, btnY) }
-        labeledText(this, { S().restart }, textSize = 22.0, x = 218.0, y = btnY + 10.0)
-        val menuBg = solidRect(200.0, 45.0, RGBA(0x0f, 0x34, 0x60)) { position(400.0, btnY) }
-        labeledText(this, { S().menu }, textSize = 22.0, x = 472.0, y = btnY + 10.0)
+        val restartContainer = container { position(210.0, btnY) }
+        val restartBg = restartContainer.solidRect(180.0, 45.0, RGBA(0xe9, 0x45, 0x60))
+        restartContainer.text("", textSize = 18.0, color = Colors.WHITE) {
+            position(90.0, 13.0)
+            alignment = TextAlignment.CENTER
+            addUpdater { text = S().restart }
+        }
+        val menuContainer2 = container { position(400.0, btnY) }
+        val menuBg = menuContainer2.solidRect(180.0, 45.0, RGBA(0x0f, 0x34, 0x60))
+        menuContainer2.text("", textSize = 18.0, color = Colors.WHITE) {
+            position(90.0, 13.0)
+            alignment = TextAlignment.CENTER
+            addUpdater { text = S().menu }
+        }
         menuBg.onOver { menuBg.color = RGBA(0x1a, 0x50, 0x80) }
         menuBg.onOut { menuBg.color = RGBA(0x0f, 0x34, 0x60) }
 
@@ -205,7 +237,7 @@ fun Container.buildGame(gameContainer: Container, menuContainer: Container) {
                 gameOver = false
                 timerValue = GameState.settings.timerSeconds
                 lastTimerUpdate = 0.0
-                statusText.text = "${S().turn}: $currentTurn"
+                statusText.text = "${S().turn}: ${playerLabel(currentTurn)}"
                 statusText.color = accent
                 syncBoardToCells()
                 if (timerText != null) timerText.text = "$timerValue"

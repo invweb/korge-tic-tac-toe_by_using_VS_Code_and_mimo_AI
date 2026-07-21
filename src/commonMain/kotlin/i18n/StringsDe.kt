@@ -35,7 +35,17 @@ val stringsDe = Strings(
     dark = "Dunkel",
     noHistory = "Kein Verlauf",
     timerExpired = "Zeit abgelaufen!",
-    undo = "Rückgängig"
+    undo = "Rückgängig",
+    twoPlayers = "Zwei Spieler",
+    vsAi = "Gegen KI",
+    statistics = "Statistik",
+    totalGames = "Spiele gesamt",
+    wins = "Siege",
+    drawsStat = "Unentschieden",
+    winRate = "Gewinnrate",
+    byBoardSize = "Nach Spielfeld",
+    byMode = "Nach Modus",
+    gamesPlayed = "Spiele"
 )
 
-val themesDe = listOf("Dunkel", "Blau", "Grün")
+val themesDe = listOf("Dunkel", "Blau", "Grün", "Rot", "Orange", "Türkis")

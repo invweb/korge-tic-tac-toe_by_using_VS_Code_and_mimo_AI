@@ -11,7 +11,7 @@ import i18n.*
 
 fun Container.buildSplash(splashContainer: Container, menuContainer: Container) {
     splashContainer.apply {
-        solidRect(600.0, 700.0, RGBA(0x0a, 0x0a, 0x1a))
+        solidRect(600.0, 800.0, RGBA(0x0a, 0x0a, 0x1a))
         solidRect(600.0, 4.0, RGBA(0xe9, 0x45, 0x60)) { position(0.0, 200.0) }
         solidRect(600.0, 4.0, RGBA(0x0f, 0x34, 0x60)) { position(0.0, 496.0) }
         val xDecor = text("X", textSize = 120.0, color = RGBA(0xe9, 0x45, 0x60, 0x40)) { position(50.0, 250.0) }

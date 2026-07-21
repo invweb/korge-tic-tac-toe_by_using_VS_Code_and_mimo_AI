@@ -15,7 +15,8 @@ data class GameSettings(
     var timerSeconds: Int = 0,
     var aiEnabled: Boolean = false,
     var darkTheme: Boolean = true,
-    var aiDifficulty: Int = 2
+    var aiDifficulty: Int = 2,
+    var multiplayer: Boolean = false
 )
 
 data class Score(var xWins: Int = 0, var oWins: Int = 0, var draws: Int = 0)
@@ -78,6 +79,7 @@ object GameState {
                 settings.aiEnabled = settingsParts[6].toBooleanStrictOrNull() ?: false
                 settings.darkTheme = settingsParts[7].toBooleanStrictOrNull() ?: true
                 settings.aiDifficulty = settingsParts[8].toIntOrNull() ?: 2
+                settings.multiplayer = settingsParts.getOrNull(9)?.toBooleanStrictOrNull() ?: false
             }
             history.clear()
             for (i in 2 until lines.size) {
@@ -95,7 +97,7 @@ object GameState {
             try {
                 val sb = StringBuilder()
                 sb.appendLine("${score.xWins},${score.oWins},${score.draws}")
-                sb.appendLine("${settings.firstPlayer},${settings.themeIndex},${settings.showGrid},${settings.langIndex},${settings.boardSize},${settings.timerSeconds},${settings.aiEnabled},${settings.darkTheme},${settings.aiDifficulty}")
+                sb.appendLine("${settings.firstPlayer},${settings.themeIndex},${settings.showGrid},${settings.langIndex},${settings.boardSize},${settings.timerSeconds},${settings.aiEnabled},${settings.darkTheme},${settings.aiDifficulty},${settings.multiplayer}")
                 for (entry in history) {
                     sb.appendLine("${entry.winner},${entry.boardSize},${entry.timestamp}")
                 }
