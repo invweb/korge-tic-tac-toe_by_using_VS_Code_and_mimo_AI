@@ -35,14 +35,22 @@ JAVA_HOME=/path/to/jdk21 ./gradlew runAndroidEmulatorDebug
 ## Features
 
 - **Splash screen** with animated X/O and fade-in text
-- **Main menu** with New Game, Settings, History, and Exit
+- **Main menu** with Two Players, vs AI, Settings, History, Statistics, and Exit
+- **Multiplayer mode** — two players on the same device, alternating turns
 - **Game board** with click-based X/O placement, win and draw detection
-- **AI opponent** (Minimax algorithm)
+- **AI opponent** with 3 difficulty levels:
+  - Easy (random moves)
+  - Medium (minimax depth 2)
+  - Hard (full minimax with alpha-beta pruning)
 - **Move timer** (5 / 15 / 30 seconds or off)
 - **Board size** — 3×3, 4×4, 5×5
-- **3 color themes** — Dark, Blue, Green
+- **6 color themes** — Dark, Blue, Green, Red, Orange, Teal (each with dark/light variants)
+- **Theme selector** in settings with color previews
 - **Dark / Light mode** toggle
+- **Undo move** — revert the last move
+- **Sound effects** — move, win, draw, and timer tick sounds (WAV format)
 - **Scoreboard** — X wins, O wins, and draws
+- **Statistics screen** — total games, win rates, games by board size, games by mode
 - **Game history** — last 20 games with clear button
 - **Multi-language** — Russian, English, German with live UI updates
 - **Grid lines** — toggle on/off
@@ -83,12 +91,30 @@ In short: **one codebase, two targets, zero platform-specific directories.**
 ├── settings.gradle.kts           # Repositories
 ├── local.properties              # Android SDK path
 ├── src/commonMain/kotlin/
-│   ├── Main.kt                   # Application entry point & UI
+│   ├── Main.kt                   # Application entry point
+│   ├── model/
+│   │   └── GameState.kt          # Game state, settings, persistence
+│   ├── logic/
+│   │   └── GameLogic.kt          # Game rules, AI (minimax)
+│   ├── ui/
+│   │   ├── SplashScreen.kt       # Splash screen with animations
+│   │   ├── MenuScreen.kt         # Main menu
+│   │   ├── GameScreen.kt         # Game board and logic
+│   │   ├── SettingsScreen.kt     # Settings panel
+│   │   ├── HistoryScreen.kt      # Game history list
+│   │   ├── StatisticsScreen.kt   # Statistics with win rates
+│   │   ├── SoundManager.kt       # Sound effects loading and playback
+│   │   └── UIHelpers.kt          # Themes, labels, utilities
 │   └── i18n/
 │       ├── Strings.kt            # Strings data class
 │       ├── StringsRu.kt          # Russian translations
 │       ├── StringsEn.kt          # English translations
 │       └── StringsDe.kt          # German translations
+├── src/commonMain/resources/     # Sound files (WAV)
+│   ├── playMove.wav
+│   ├── playWin.wav
+│   ├── playDraw.wav
+│   └── playTick.wav
 └── screenshots/                  # Screenshots (Desktop + Android)
 ```
 
@@ -131,14 +157,22 @@ JAVA_HOME=/path/to/jdk21 ./gradlew runAndroidEmulatorDebug
 ## Возможности
 
 - **Splash-экран** с анимированными X/O и fade-in текстом
-- **Меню** с пунктами: Новая игра, Настройки, История, Выход
+- **Меню** с пунктами: Два игрока, Против ИИ, Настройки, История, Статистика, Выход
+- **Мультиплеер** — два игрока на одном устройстве, по очереди ходят
 - **Игровое поле** с кликами, ходами X/O, определением победы и ничьей
-- **AI-противник** (алгоритм Minimax)
+- **AI-противник** с 3 уровнями сложности:
+  - Лёгкий (случайные ходы)
+  - Средний (minimax глубина 2)
+  - Сложный (полный minimax с альфа-бета отсечением)
 - **Таймер хода** (5 / 15 / 30 секунд или без ограничений)
 - **Размер поля** — 3×3, 4×4, 5×5
-- **3 цветовые темы** — Тёмная, Синяя, Зелёная
+- **6 цветовых тем** — Тёмная, Синяя, Зелёная, Красная, Оранжевая, Бирюзовая (светлые и тёмные варианты)
+- **Селектор тем** в настройках с превью цветов
 - **Тёмный / светлый режим**
+- **Отмена хода** — вернуть последний ход
+- **Звуковые эффекты** — звуки хода, победы, ничьей и тика таймера (формат WAV)
 - **Счёт** — победы X, O и ничьи
+- **Статистика** — всего игр, процент побед, по размеру поля, по режиму игры
 - **История** — последние 20 игр с кнопкой очистки
 - **Мультиязычность** — Русский, English, Deutsch с мгновенным обновлением интерфейса
 - **Сетка** — включение/выключение
@@ -179,11 +213,29 @@ KorGE работает иначе, чем стандартный Compose Multipl
 ├── settings.gradle.kts           # Репозитории
 ├── local.properties              # Путь к Android SDK
 ├── src/commonMain/kotlin/
-│   ├── Main.kt                   # Точка входа и UI
+│   ├── Main.kt                   # Точка входа
+│   ├── model/
+│   │   └── GameState.kt          # Состояние игры, настройки, persistence
+│   ├── logic/
+│   │   └── GameLogic.kt          # Правила игры, AI (minimax)
+│   ├── ui/
+│   │   ├── SplashScreen.kt       # Splash-экран с анимациями
+│   │   ├── MenuScreen.kt         # Главное меню
+│   │   ├── GameScreen.kt         # Игровое поле и логика
+│   │   ├── SettingsScreen.kt     # Панель настроек
+│   │   ├── HistoryScreen.kt      # Список истории игр
+│   │   ├── StatisticsScreen.kt   # Статистика с процентами побед
+│   │   ├── SoundManager.kt       # Загрузка и воспроизведение звуков
+│   │   └── UIHelpers.kt          # Темы, подписи, утилиты
 │   └── i18n/
 │       ├── Strings.kt            # Data class со строками
 │       ├── StringsRu.kt          # Русские переводы
 │       ├── StringsEn.kt          # Английские переводы
 │       └── StringsDe.kt          # Немецкие переводы
+├── src/commonMain/resources/     # Звуковые файлы (WAV)
+│   ├── playMove.wav
+│   ├── playWin.wav
+│   ├── playDraw.wav
+│   └── playTick.wav
 └── screenshots/                  # Скриншоты (Desktop + Android)
 ```
